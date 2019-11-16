@@ -44,6 +44,15 @@
         else{
             echo "Error en la creación tabla Clientes ".mysqli_error($con);
         }
+
+        $sql="INSERT INTO Clientes(USUARIO,CONTRASENHA)VALUES('Manuel','12345')";
+        if(mysqli_query($con,$sql)){
+            echo "Se ha insetado a Manuel";
+        }
+        else {
+            echo "Error insertado la cuenta";
+        }
+
         $sql="CREATE TABLE Visitantes (
             PID INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY(PID),
@@ -58,11 +67,15 @@
                 echo "Error en la creación tabla Visitantes ".mysqli_error($con);
             }
         $sql='CREATE table Cuentas_Ahorros(
+            PID INT NOT NULL AUTO_INCREMENT,
+            PRIMARY KEY(PID),
             IDUSUARIO INT,
-            PRIMARY KEY(IDUSUARIO),
             JAVECOINS FLOAT,
             FOREIGN KEY (IDUSUARIO) REFERENCES Clientes(PID),
             CHECK (JAVECOINS >= 0))';
+
+        
+
         if(mysqli_query($con,$sql))
         {
             echo "Tabla Cuentas_Ahorros creada.<br>";
@@ -70,13 +83,26 @@
         else{
             echo "Error en la creación tabla Cuentas_Ahorros ".mysqli_error($con)."<br>";
         }
+
+
+        $sql="INSERT INTO Cuentas_Ahorros(IDUSUARIO,JAVECOINS)VALUES('1','1000000')";
+        if(mysqli_query($con,$sql)){
+            echo "Se ha insetado la cuenta";
+        }
+        else {
+            echo "Error insertado la cuenta";
+        }
+
         $sql="CREATE table Creditos(
             PID INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY(PID),
-            USUARIO VARCHAR(40) unique,
-            JAVECOINS FLOAT,
+            IDUSUARIO INT,
+            CUPOJAVECOINS FLOAT,
+            TASAINTERES FLOAT,
+            FECHADEPAGO INT,
             TIPO CHAR,
-            CHECK (JAVECOINS >= 0 AND (TIPO='V' or TIPO ='C')))";
+            FOREIGN KEY (IDUSUARIO) REFERENCES Clientes(PID),
+            CHECK (CUPOJAVECOINS >= 0 AND (TIPO='V' or TIPO ='C') AND (FECHADEPAGO> 0 AND FECHADEPAGO<32)))";
         if(mysqli_query($con,$sql))
         {
             echo "Tabla Creditos creada.<br>";
@@ -84,16 +110,24 @@
         else{
             echo "Error en la creación tabla Creditos ".mysqli_error($con)."<br>";
         }
+
+        $sql="INSERT INTO CREDITOS(IDUSUARIO,CUPOJAVECOINS,TASAINTERES,FECHADEPAGO,TIPO)VALUES('1','1000000','0.1','15','C')";
+        if(mysqli_query($con,$sql)){
+            echo "Se ha insertado EL CREDITO";
+        }
+        else {
+            echo "Error AL INSERTAR EL CREDITO";
+        }
+
         $sql="CREATE table Tarjetas_Credito (
             PID INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY(PID),
-            CUENTA VARCHAR(40) NOT NULL,
+            PIDCUENTA INT NOT NULL,
             CUPOMAX FLOAT,
             SOBRECUPO FLOAT,
             CUOTAMANEJO FLOAT,
             TASAINTERES FLOAT,
-            FOREIGN KEY (CUENTA) REFERENCES Clientes(USUARIO),
-            FOREIGN KEY (CUENTA) REFERENCES Creditos(USUARIO)
+            FOREIGN KEY (PIDCUENTA) REFERENCES Cuentas_Ahorros(PID)
             )";
         if(mysqli_query($con,$sql))
         {
