@@ -73,7 +73,7 @@
             PRIMARY KEY(PID),
             IDUSUARIO INT,
             JAVECOINS FLOAT,
-            FOREIGN KEY (IDUSUARIO) REFERENCES Clientes(PID),
+            FOREIGN KEY (IDUSUARIO) REFERENCES Clientes(PID) ON DELETE CASCADE,
             CHECK (JAVECOINS >= 0))';
 
         
@@ -99,6 +99,7 @@
             PID INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY(PID),
             IDUSUARIO INT,
+            IDVISITANTE INT,
             EMAIL VARCHAR(30),
             CUPOJAVECOINS FLOAT,
             TASAINTERES FLOAT,
@@ -107,7 +108,8 @@
             CANTIDADCUOTAS INT NOT NULL,
             CUOTASPAGAS INT DEFAULT 0,
             FECHAULTIMOPAGO DATE,
-            FOREIGN KEY (IDUSUARIO) REFERENCES Clientes(PID),
+            FOREIGN KEY (IDUSUARIO) REFERENCES Clientes(PID) ON DELETE CASCADE,
+            FOREIGN KEY (IDVISITANTE) REFERENCES Visitantes(PID) ON DELETE CASCADE,
             CHECK (CUPOJAVECOINS >= 0 AND (TIPO='V' or TIPO ='C') AND (FECHADEPAGO> 0 AND FECHADEPAGO<32)))";
         if(mysqli_query($con,$sql))
         {
@@ -134,7 +136,7 @@
             SOBRECUPO FLOAT,
             CUOTAMANEJO FLOAT,
             TASAINTERES FLOAT,
-            FOREIGN KEY (PIDCUENTA) REFERENCES Cuentas_Ahorros(PID)
+            FOREIGN KEY (PIDCUENTA) REFERENCES Cuentas_Ahorros(PID) ON DELETE CASCADE
             )";
         if(mysqli_query($con,$sql))
         {
@@ -143,12 +145,30 @@
         else{
             echo "Error en la creación tabla Tarjetas_Credito ".mysqli_error($con)."<br>";
         }
-		$sql="INSERT INTO Tarjetas_Credito(PIDCUENTA,CUPOMAX) VALUES(1, 1000)";
+        $sql="INSERT INTO Tarjetas_Credito(PIDCUENTA,CUPOMAX) VALUES(1, 1000)";
 		if(mysqli_query($con,$sql)){
             echo "Se ha insertado la tarjeta CREDITO <br>";
         }
         else {
             echo "Error AL INSERTAR la tarjeta CREDITO <br>";
+        }
+        $sql="CREATE table Tarjetas_CreditoSinAprobar (
+            PID INT NOT NULL AUTO_INCREMENT,
+            PRIMARY KEY(PID),
+            PIDCUENTA INT NOT NULL,
+            CUPOMAX FLOAT,
+			CUPOACTUAL FLOAT DEFAULT 0,
+            SOBRECUPO FLOAT,
+            CUOTAMANEJO FLOAT,
+            TASAINTERES FLOAT,
+            FOREIGN KEY (PIDCUENTA) REFERENCES Cuentas_Ahorros(PID) ON DELETE CASCADE
+            )";
+        if(mysqli_query($con,$sql))
+        {
+            echo "Tabla Tarjetas_Credito creada.<br>";
+        }
+        else{
+            echo "Error en la creación tabla Tarjetas_Credito ".mysqli_error($con)."<br>";
         }
         //SYSDATETIME()
 		$sql="CREATE table Deudas_Tarjetas (
@@ -159,7 +179,7 @@
             CANTIDADCUOTAS INT NOT NULL,
             CUOTASPAGAS INT DEFAULT 0,
             FECHAPAGO DATE,
-            FOREIGN KEY (PIDTARJETA) REFERENCES Tarjetas_Credito(PID)
+            FOREIGN KEY (PIDTARJETA) REFERENCES Tarjetas_Credito(PID) ON DELETE CASCADE
             )";
         if(mysqli_query($con,$sql))
         {

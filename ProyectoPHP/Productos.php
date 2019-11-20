@@ -185,7 +185,7 @@
        
         //check if form was submitted
         // en el primer campo el id de usuario de esta session, en el segundo va el cupo, en el tercero la tasa sugerida
-        $sql="INSERT INTO Tarjetas_Credito(PIDCUENTA) VALUES($noCuentaAhorros)";
+        $sql="INSERT INTO Tarjetas_CreditoSinAprobar(PIDCUENTA) VALUES($noCuentaAhorros)";
 		if(mysqli_query($con,$sql)){
             echo "Se ha pedido  la tarjeta <br>";
         }

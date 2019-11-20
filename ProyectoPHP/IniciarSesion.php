@@ -24,6 +24,7 @@ $con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
             $_SESSION["newsession"]=$nombre;
             //echo $_SESSION["newsession"];
             $_SESSION["id"] = $aux[0];
+            $_SESSION["admin"] = true;
             mysqli_close($con);
             header("Location:index.php");
         }
@@ -38,7 +39,7 @@ $con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
                 //echo "<h2>Bienvenido $nombre </h2>";
                 $ss = "SELECT * FROM clientes where usuario = '$nombre' and contrasenha = '$passCrypt' ";
                 $aux = mysqli_fetch_row(mysqli_query($con,$ss));
-                var_dump($aux);
+                //var_dump($aux);
                 session_start();
                 $_SESSION["newsession"]=$nombre;
                 //echo $_SESSION["newsession"];
