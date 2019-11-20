@@ -52,7 +52,11 @@ if(isset($_POST['consignar']))
         <label>No credito a pagar: </label>
             <input type="text" name="noCredito" pattern="[1-9]([0-9])*" id="subject" required placeholder="Solo números"><br><br>
         <label>Cantidad a pagar: </label>
-            <input type="text" name="pagarConsignar" pattern="[1-9]([0-9])*" id="subject" required placeholder="Solo números"><br><br>
+            <input type="text" name="pagarConsignar" pattern="([1-9]([0-9])*.?([0-9])*)|(0.([0-9])*[1-9])" id="subject" required placeholder="Solo números"><br><br>
+            <select name="Moneda">
+                <option  value="JaveCoins">JaveCoins</option> 
+                <option  value="Pesos">Pesos</option> 
+            </select><br><br>
             <input type="submit" value="enviar" name="consignarPagar1">
         </form>
     </div>
@@ -61,8 +65,14 @@ if(isset($_POST['consignar']))
         <form action="<?php $_SERVER['PHP_SELF'];?>" method="post">
         <label>No cuenta de ahorros a consignar: </label>
             <input type="text" name="noAhorros" pattern="[1-9]([0-9])*" id="subject" required placeholder="Solo números"><br><br>
-        <label>Cantidad a consignar: </label>
-            <input type="text" name="pagarConsignar" pattern="[1-9]([0-9])*" id="subject" required placeholder="Solo números"><br><br>
+        
+            <label>Cantidad a consignar: </label>
+            <input type="text" name="pagarConsignar" pattern="([1-9]([0-9])*.?([0-9])*)|(0.([0-9])*[1-9])" id="subject" required placeholder="Solo números"><br><br>
+            <label>Pagar en: </label>
+            <select name="Moneda">
+                <option  value="JaveCoins">JaveCoins</option> 
+                <option  value="Pesos">Pesos</option> 
+            </select><br><br>
             <input type="submit" value="enviar" name="consignarPagar2">
         </form>
     </div>
@@ -154,7 +164,6 @@ if(isset($_POST['consignar']))
             if(isset($_SESSION["newsession"])){
             $id=$_SESSION["id"];
             $NoCuenta=$_POST['noAhorros'];
-            $cantidadConsignar=$_POST['pagarConsignar'];
         
 
         $sql="SELECT JAVECOINS FROM cuentas_ahorros where PID = $NoCuenta ";
@@ -164,7 +173,15 @@ if(isset($_POST['consignar']))
               $act=$fila['JAVECOINS'];
           }
        
-
+        $cantidadConsignar=$_POST['pagarConsignar'];
+        if($_POST['Moneda']=='JaveCoins')
+        {
+            $cantidadConsignar=$_POST['pagarConsignar'];
+        }
+        else
+        {
+            $cantidadConsignar=$_POST['pagarConsignar']/1000;
+        }
            $act+=$cantidadConsignar;
           $sql="UPDATE cuentas_ahorros SET JAVECOINS = $act where PID = $NoCuenta ";
           if(mysqli_query($con,$sql))
@@ -188,8 +205,15 @@ if(isset($_POST['consignar']))
               $act=$fila['JAVECOINS'];
           }
        
-
-           $act+=$cantidadConsignar;
+          $cantidadConsignar=$_POST['pagarConsignar'];
+        if($_POST['Moneda']=='JaveCoins')
+        {
+            $cantidadConsignar=$_POST['pagarConsignar'];
+        }
+        else
+        {
+            $cantidadConsignar=$_POST['pagarConsignar']/1000;
+        }
           $sql="UPDATE cuentas_ahorros SET JAVECOINS = $act where PID = $NoCuenta";
           if(mysqli_query($con,$sql))
           {
@@ -215,7 +239,6 @@ if(isset($_POST['consignar']))
             $id=$_SESSION["id"];
             if(isset($_SESSION["newsession"])){
             $NoCredito=$_POST['noCredito'];
-            $cantidadConsignar=$_POST['pagarConsignar'];
             
 
         $sql="SELECT CUPOJAVECOINS FROM creditos where PID = $NoCredito AND IDUSUARIO = $id";
@@ -225,7 +248,15 @@ if(isset($_POST['consignar']))
               $act=$fila['CUPOJAVECOINS'];
           }
        
-
+          $cantidadConsignar=$_POST['pagarConsignar'];
+          if($_POST['Moneda']=='JaveCoins')
+          {
+              $cantidadConsignar=$_POST['pagarConsignar'];
+          }
+          else
+          {
+              $cantidadConsignar=$_POST['pagarConsignar']/1000;
+          }
            $act-=$cantidadConsignar;
           $sql="UPDATE creditos SET CUPOJAVECOINS = $act where PID = $NoCredito AND IDUSUARIO = $id";
           if(mysqli_query($con,$sql))
@@ -238,9 +269,16 @@ if(isset($_POST['consignar']))
           }
         } else {
             $NoCredito=$_POST['noCredito'];
-            $cantidadConsignar=$_POST['pagarConsignar'];
             $email=$_POST['email'];
-
+            $cantidadConsignar=$_POST['pagarConsignar'];
+        if($_POST['Moneda']=='JaveCoins')
+        {
+            $cantidadConsignar=$_POST['pagarConsignar'];
+        }
+        else
+        {
+            $cantidadConsignar=$_POST['pagarConsignar']/1000;
+        }
 
         $sql="SELECT CUPOJAVECOINS FROM creditos where PID = $NoCredito AND EMAIL= $email";
         $resultado = mysqli_query($con,$sql);
