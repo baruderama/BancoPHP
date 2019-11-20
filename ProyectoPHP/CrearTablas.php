@@ -47,13 +47,7 @@
             echo "Error en la creación tabla Clientes ".mysqli_error($con);
         }
 
-        $sql="INSERT INTO Clientes(USUARIO,CONTRASENHA)VALUES('Manuel','12345')";
-        if(mysqli_query($con,$sql)){
-            echo "Se ha insetado a Manuel";
-        }
-        else {
-            echo "Error insertado la cuenta";
-        }
+        
 
         $sql="CREATE TABLE Visitantes (
             PID INT NOT NULL AUTO_INCREMENT,
@@ -87,13 +81,7 @@
         }
 
 
-        $sql="INSERT INTO Cuentas_Ahorros(IDUSUARIO,JAVECOINS)VALUES('1','1000000')";
-        if(mysqli_query($con,$sql)){
-            echo "Se ha insetado la cuenta";
-        }
-        else {
-            echo "Error insertado la cuenta";
-        }
+        
 
         $sql="CREATE table Creditos(
             PID INT NOT NULL AUTO_INCREMENT,
@@ -119,13 +107,7 @@
             echo "Error en la creación tabla Creditos ".mysqli_error($con)."<br>";
         }
 
-        $sql="INSERT INTO CREDITOS(IDUSUARIO,CUPOJAVECOINS,TASAINTERES,FECHADEPAGO,TIPO)VALUES('1','1000000','0.1','15','C')";
-        if(mysqli_query($con,$sql)){
-            echo "Se ha insertado EL CREDITO";
-        }
-        else {
-            echo "Error AL INSERTAR EL CREDITO";
-        }
+        
 
         $sql="CREATE table Tarjetas_Credito (
             PID INT NOT NULL AUTO_INCREMENT,
@@ -145,13 +127,7 @@
         else{
             echo "Error en la creación tabla Tarjetas_Credito ".mysqli_error($con)."<br>";
         }
-        $sql="INSERT INTO Tarjetas_Credito(PIDCUENTA,CUPOMAX) VALUES(1, 1000)";
-		if(mysqli_query($con,$sql)){
-            echo "Se ha insertado la tarjeta CREDITO <br>";
-        }
-        else {
-            echo "Error AL INSERTAR la tarjeta CREDITO <br>";
-        }
+        
         $sql="CREATE table Tarjetas_CreditoSinAprobar (
             PID INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY(PID),
@@ -187,6 +163,40 @@
         }
         else{
             echo "Error en la creación tabla Tarjetas_Credito ".mysqli_error($con)."<br>";
+        }
+
+        $sql="CREATE table Mensajes (
+            PID INT NOT NULL AUTO_INCREMENT,
+            PRIMARY KEY(PID),
+            PIDUSUARIO INT NOT NULL,
+            ASUNTO VARCHAR(30),
+			MENSAJE VARCHAR(255),
+            PIDUSUARIODESTINO INT NOT NULL,
+            FOREIGN KEY (PIDUSUARIO) REFERENCES CLIENTES(PID) ON DELETE CASCADE
+            )";
+        if(mysqli_query($con,$sql))
+        {
+            echo "Tabla Mensajes creada.<br>";
+        }
+        else{
+            echo "Error en la creación tabla Mensajes ".mysqli_error($con)."<br>";
+        }
+
+        $sql="CREATE table MensajesAdmin (
+            PID INT NOT NULL AUTO_INCREMENT,
+            PRIMARY KEY(PID),
+            PIDADMIN INT NOT NULL,
+            ASUNTO VARCHAR(30),
+			MENSAJE VARCHAR(255),
+            PIDUSUARIODESTINO INT NOT NULL,
+            FOREIGN KEY (PIDADMIN) REFERENCES ADMINISTRADOR(PID) ON DELETE CASCADE
+            )";
+        if(mysqli_query($con,$sql))
+        {
+            echo "Tabla MensajesAdmin creada.<br>";
+        }
+        else{
+            echo "Error en la creación tabla MensajesAdmin ".mysqli_error($con)."<br>";
         }
         mysqli_close($con);
     ?> 

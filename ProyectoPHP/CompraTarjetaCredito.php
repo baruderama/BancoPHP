@@ -10,56 +10,69 @@ if(isset($_POST['Moneda']))
 	{
 		$totalJav=$_POST['total']/1000;
 	}
-	$Nombre = '';//esto se reemplaza por session
-	//query para obtener el id del usuario iniciado
-	$idusuario= 1;
-	$tarjeta=1;
-	$totalCobrar=$totalJav;
+	session_start();
+	$idusuario= $_SESSION["id"];
+	$tarjeta=$_POST['tarjeta'];
+	$totalCobrar=$_POST['total'];
 	$cuotas=$_POST['cuotas'];
 	include_once dirname(__FILE__).'/Conf/config.php';
 	$con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
 	
-	$sql="SELECT PID FROM Cuentas_Ahorros where IDUSUARIO = $idusuario";
-	$resultado = mysqli_query($con,$sql);
+	$sql1="SELECT PID FROM Cuentas_Ahorros where IDUSUARIO = $idusuario";
+	$resultado1 = mysqli_query($con,$sql1);
 	$idCuenta;
-	while($fila = mysqli_fetch_array($resultado)) 
+	//echo "v";
+	while($fila = mysqli_fetch_array($resultado1)) 
 	{
-		$idCuenta=$fila['PID'];
-	}
-	$sql="SELECT * FROM Tarjetas_Credito where PIDCUENTA = $idCuenta AND PID = $tarjeta";
-	$resultado = mysqli_query($con,$sql);
-	$cMax;
-	$cAct;
-	while($fila = mysqli_fetch_array($resultado)) 
-	{
-		$cMax=$fila['CUPOMAX'];
-		$cAct=$fila['CUPOACTUAL'];
-	}
-	if($cMax>= $totalCobrar+$cAct)
-	{
-
-		$cAct+=$totalCobrar;
-		$sql="UPDATE Tarjetas_Credito SET CUPOACTUAL = $cAct where PID = $tarjeta AND PIDCUENTA =$idCuenta";
-		if(mysqli_query($con,$sql))
+		$idCuenta=$fila[0];
+		//echo " fid ".$idCuenta;
+	
+		
+		//echo " ed ".$idusuario." f ".$tarjeta." h ".$totalCobrar."o".$cuotas."p".$idCuenta;
+		$sql="SELECT count(1) FROM Tarjetas_Credito where PIDCUENTA = $idCuenta AND PID = $tarjeta";
+		$cMax=0;
+		$cAct=0;
+		$aux = mysqli_fetch_row(mysqli_query($con,$sql));
+		if($aux[0]==1)
 		{
-			echo "Exito actual $cAct <br>";
-			$sql="INSERT INTO Deudas_Tarjetas(PIDTARJETA,CANTIDADCUOTAS,CANTIDADPAGAR)VALUES($tarjeta, $cuotas, $totalCobrar)";
+			$sql="SELECT * FROM Tarjetas_Credito where PIDCUENTA = $idCuenta AND PID = $tarjeta";
+			$resultado=mysqli_query($con,$sql);
+			while($fila = mysqli_fetch_array($resultado)) 
+			{
+				echo "fila ".$fila['CUPOMAX'];
+				var_dump($fila);
+				$cMax=$fila['CUPOMAX'];
+				$cAct=$fila['CUPOACTUAL'];
+			}
+		echo "max ".$cMax.$cAct;
+		if($cMax>= $totalCobrar+$cAct)
+		{
+
+			$cAct+=$totalCobrar;
+			$sql="UPDATE Tarjetas_Credito SET CUPOACTUAL = $cAct where PID = $tarjeta AND PIDCUENTA =$idCuenta";
 			if(mysqli_query($con,$sql))
 			{
-				echo "Listo<br><br>";
-				header("Location:PagoExitoso.php");
+				echo "Exito actual $cAct <br>";
+				$sql="INSERT INTO Deudas_Tarjetas(PIDTARJETA,CANTIDADCUOTAS,CANTIDADPAGAR)VALUES($tarjeta, $cuotas, $totalCobrar)";
+				if(mysqli_query($con,$sql))
+					{
+						echo "Listo<br><br>";
+						header("Location:PagoExitoso.php");
+					}
+					else{
+						echo "Error en la insercion ".mysqli_error($con).".<br>";
+					}
+				}
+				else{
+					echo "Error en la actualizacion ".mysqli_error($con).".<br>";
+				}
 			}
-			else{
-				echo "Error en la insercion ".mysqli_error($con).".<br>";
-			}
+			else 
+			{
+				echo "fondos insuficientes";
 		}
-		else{
-			echo "Error en la actualizacion ".mysqli_error($con).".<br>";
 		}
-	}
-	else 
-	{
-		echo "fondos insuficientes";
+		
 	}
 }
 else
@@ -120,10 +133,13 @@ $con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
  $str_datos.='<th>No Cuenta Asociada</th>';
  $str_datos.='<th>Deuda</th>';
  $str_datos.='</tr>';
- $sql1="SELECT * FROM Creditos where IDUSUARIO= '$id' ";
+ echo "gg";
+ $sql1="SELECT * FROM Cuentas_Ahorros where IDUSUARIO= '$id' ";
  $resultado1 = mysqli_query($con,$sql1);
+ echo "ññ";
  while($fila1 = mysqli_fetch_array($resultado1)) {
 	$q=$fila1['PID'];
+	echo "pids ".$q;
 	$sql="SELECT * FROM Tarjetas_Credito where PIDCUENTA= '$q'";
 	$resultado = mysqli_query($con,$sql);
 	while($fila = mysqli_fetch_array($resultado)) {
@@ -132,6 +148,7 @@ $con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
 		$str_datos.= "</tr>";
  	}	
 }
+//echo "hh";
  
  $str_datos.= "</table>";
  echo $str_datos;

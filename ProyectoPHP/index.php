@@ -29,6 +29,7 @@
 			unset($_SESSION['admin']);
 			unset($_SESSION["newsession"]);
 			unset($_POST['btnCerrarS']);
+			unset($_SESSION["tipo"]);
 		}
 	}
 	$hideIniciar='';
@@ -113,6 +114,14 @@
 				<input type="submit" value="Administrar Usuarios" name = "btnAdminUsuarios">
 			</form>
 		</div>
+
+		<form action="FinDeMes.php" method="post"  >
+				<input type="submit" value="Fin de Mes" name = "btnFinDeMes">
+			</form>
+
+			<form action="centroMensajes.php" method="post"  >
+				<input type="submit" value="Centro de Mensajes" name = "btnCentroMensajes">
+			</form>
 		
 	</body>
 </html>

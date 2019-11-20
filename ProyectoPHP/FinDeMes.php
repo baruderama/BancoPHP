@@ -1,19 +1,30 @@
 <?php
 include_once dirname(__FILE__).'/Conf/config.php';
 $con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
-
+    session_start();
     if(isset($_SESSION["newsession"]) && $_SESSION["tipo"]=='A') //Se revisa que sea un administrador
     {
         //Pago creditos
+        //echo "gg";
         $sql = "SELECT DATENAME(w, FECHADEPAGO) from creditos";
         $resultado = mysqli_query($con,$sql);
         if($resultado !='Saturday' && $resultado !='Sunday') //Que hoy no sea Sabado o domingo para poder hacer los pagos
         {
             //Cobro visitantes
-            $sql = "SELECT * FROM  creditos where tipo = 'V' and FECHADEPAGO = SYSDATETIME()"; //se sacan los creditos que tienen fecha de corte el dia de hoy y que la persona es visitante
-            
+            $sql = "SELECT * FROM  Creditos where tipo = 'V' and FECHADEPAGO = GETDATE()"; //se sacan los creditos que tienen fecha de corte el dia de hoy y que la persona es visitante
             $resultado = mysqli_query($con,$sql);
+            
+            var_dump($resultado);
+            if($resultado)
+            {
+
+            }else
+            {
+                echo " err ".mysqli_error($con);
+            }
             while($fila = mysqli_fetch_array($resultado)) {
+                echo "hh";
+                var_dump($fila);
                 $javecoins = $fila['JAVECOINS'];
                 $usuario = $fila['USUARIO'];
                 $idCredito = $fila['PID'];
@@ -23,7 +34,7 @@ $con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
                 $interval = date_diff($fechaPago, $fechaUltimoPago);
                 $sql = "SELECT email from visitantes where PID=$idVisitante";
                 $resultado2=mysqli_query($con,$sql);
-                $auxEmail = mysqli_fetch_array($resultado2)
+                $auxEmail = mysqli_fetch_array($resultado2);
                 if (mysqli_query($con,$sql)) {
                     if($interval->d >5 && $fechaUltimoPago < $fechaPago)
                     {
@@ -209,3 +220,7 @@ $con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
     }
     mysqli_close($con);
 ?>
+
+<form action="index.php" method="post">
+        <input type="submit" value="Volver">
+    </form>

@@ -25,6 +25,7 @@ $con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
             //echo $_SESSION["newsession"];
             $_SESSION["id"] = $aux[0];
             $_SESSION["admin"] = true;
+            $_SESSION["tipo"]='A';
             mysqli_close($con);
             header("Location:index.php");
         }
