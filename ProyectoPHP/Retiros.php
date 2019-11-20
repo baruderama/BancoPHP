@@ -61,5 +61,8 @@
          }
         }
     ?>
+    <form action="index.php" method="post">
+        <input type="submit" value="Volver">
+    </form>
     </body>
 </html>

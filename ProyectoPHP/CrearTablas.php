@@ -21,6 +21,7 @@
             PID INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY(PID),
             USUARIO VARCHAR(40) unique,
+            EMAIL VARCHAR(40) unique,
             CONTRASENHA VARCHAR(40)
         )";
 
@@ -35,6 +36,7 @@
         PID INT NOT NULL AUTO_INCREMENT,
         PRIMARY KEY(PID),
         USUARIO VARCHAR(40) unique,
+        EMAIL VARCHAR(40) unique,
         CONTRASENHA VARCHAR(40)
         )";
         if(mysqli_query($con,$sql))
@@ -97,10 +99,14 @@
             PID INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY(PID),
             IDUSUARIO INT,
+            EMAIL VARCHAR(30),
             CUPOJAVECOINS FLOAT,
             TASAINTERES FLOAT,
             FECHADEPAGO INT,
             TIPO CHAR,
+            CANTIDADCUOTAS INT NOT NULL,
+            CUOTASPAGAS INT DEFAULT 0,
+            FECHAULTIMOPAGO DATE,
             FOREIGN KEY (IDUSUARIO) REFERENCES Clientes(PID),
             CHECK (CUPOJAVECOINS >= 0 AND (TIPO='V' or TIPO ='C') AND (FECHADEPAGO> 0 AND FECHADEPAGO<32)))";
         if(mysqli_query($con,$sql))
@@ -144,6 +150,7 @@
         else {
             echo "Error AL INSERTAR la tarjeta CREDITO <br>";
         }
+        //SYSDATETIME()
 		$sql="CREATE table Deudas_Tarjetas (
             PID INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY(PID),
@@ -151,6 +158,7 @@
 			CANTIDADPAGAR FLOAT,
             CANTIDADCUOTAS INT NOT NULL,
             CUOTASPAGAS INT DEFAULT 0,
+            FECHAPAGO DATE,
             FOREIGN KEY (PIDTARJETA) REFERENCES Tarjetas_Credito(PID)
             )";
         if(mysqli_query($con,$sql))

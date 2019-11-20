@@ -4,6 +4,7 @@ $con=mysqli_connect(HOST_DB,USUARIO_DB,USUARIO_PASS,NOMBRE_DB);
 echo "<form action='' method='post'>
 <input type='text' placeholder='Nickname' name = 'txtRegNom'>
 <input type='password' placeholder='Password' name = 'txtRegPass'>
+<input type='email' name='correo' id='subject1' required placeholder='Correo valido'><br><br>
 <input type='submit' value='Registrarse' name = 'btnRegistrar'>
 </form>";
 echo "<form action='index.php' method='post'>
@@ -34,12 +35,13 @@ if(isset($_POST['txtRegNom']))
     if(!$existe)
     {
         $password = $_POST['txtRegPass'];
+        $email=$_POST['correo'];
         $passCrypt = crypt('$password','$6iahEstoyArto');
         $sql="SELECT COUNT(PID) FROM administrador";
         $aux = mysqli_fetch_row(mysqli_query($con,$sql));
         if($aux[0]==0)
         {
-            $sql = "INSERT INTO administrador(USUARIO, CONTRASENHA) VALUES ('$nombre','$passCrypt')";
+            $sql = "INSERT INTO administrador(USUARIO, CONTRASENHA,EMAIL) VALUES ('$nombre','$passCrypt','$email')";
             if(mysqli_query($con,$sql))
             {
                 echo "El administrador $nombre ha sido creado correctamente";
@@ -50,7 +52,7 @@ if(isset($_POST['txtRegNom']))
         }
         else
         {
-            $sql = "INSERT INTO clientes (USUARIO, CONTRASENHA) VALUES ('$nombre','$passCrypt')";
+            $sql = "INSERT INTO clientes (USUARIO, CONTRASENHA,EMAIL) VALUES ('$nombre','$passCrypt','$email')";
             if(mysqli_query($con,$sql))
             {
                 echo "El cliente $nombre ha sido creado correctamente";
@@ -62,5 +64,5 @@ if(isset($_POST['txtRegNom']))
         }
     }
 }
-
+mysqli_close($con);
 ?>
